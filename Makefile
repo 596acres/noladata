@@ -8,6 +8,7 @@ prepare_processed:
 	mkdir -p processed/buildings
 	mkdir -p processed/boundary
 	mkdir -p processed/parcels
+	mkdir -p processed/nora/uncommitted_properties
 
 clean_processed:
 	rm -rf processed
@@ -58,3 +59,18 @@ import_parcels:
 	psql -c "ALTER TABLE parcels ADD COLUMN full_address VARCHAR(100);" -d nola
 	psql -c "UPDATE parcels SET full_address = situs_numb || ' ' || situs_stre || ' ' || situs_type WHERE situs_dir IS NULL;" -d nola
 	psql -c "UPDATE parcels SET full_address = situs_numb || ' ' || situs_dir || ' ' || situs_stre || ' ' || situs_type WHERE situs_dir IS NOT NULL;" -d nola
+
+download_nora_uncommitted:
+	curl -L "https://data.nola.gov/api/views/5ktx-e9wc/rows.csv?accessType=DOWNLOAD" -o raw/NORA_Uncommitted_Properties.csv
+
+# Break Property Address cells into multiple cells by newline
+# Break address cells into multiple cells by comma and "LA "
+# Break coordinates into multiple cells by comma
+# Remove parentheses from coordinates
+process_nora_uncommitted:
+	sed -e '/^ORL/ { N;N;s/\n/","/g; }' \
+		-e '1,/Address/ s/Address/Address,City,State,Zip,X,Y/' \
+		-e 's/, /","/g' \
+		-e 's/(//' -e 's/)//' \
+		-e 's/LA /LA","/g' \
+		< raw/NORA_Uncommitted_Properties.csv > processed/nora/uncommitted_properties/uncommitted_properties.csv
