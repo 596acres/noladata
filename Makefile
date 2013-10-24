@@ -69,7 +69,7 @@ download_nora_uncommitted:
 # Remove parentheses from coordinates
 process_nora_uncommitted:
 	sed -e '/^ORL/ { N;N;s/\n/","/g; }' \
-		-e '1,/Address/ s/Address/Address,City,State,Zip,X,Y/' \
+		-e '1,/Address/ s/Address/Address,City,State,Zip,Y,X/' \
 		-e 's/, /","/g' \
 		-e 's/(//' -e 's/)//' \
 		-e 's/LA /LA","/g' \
