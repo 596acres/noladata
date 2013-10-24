@@ -15,3 +15,7 @@ def from_shapefile(strict=False, progress=True, verbose=False, **kwargs):
     mapping = LayerMapping(Address, address_shp, address_mapping,
                            transform=False)
     mapping.save(strict=strict, progress=progress, verbose=verbose, **kwargs)
+
+
+def load(**kwargs):
+    from_shapefile(**kwargs)

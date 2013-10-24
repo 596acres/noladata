@@ -67,10 +67,12 @@ download_nora_uncommitted:
 # Break address cells into multiple cells by comma and "LA "
 # Break coordinates into multiple cells by comma
 # Remove parentheses from coordinates
+#-e '/^ORL/ { N;N;s/\n/","/g; }'
 process_nora_uncommitted:
-	sed -e '/^ORL/ { N;N;s/\n/","/g; }' \
+	sed -e '/^ORL/,/,.$$/ {N;s/\n/","/; /,.$$/ !{N;s/\n/","/;}; }' \
 		-e '1,/Address/ s/Address/Address,City,State,Zip,Y,X/' \
 		-e 's/, /","/g' \
 		-e 's/(//' -e 's/)//' \
-		-e 's/LA /LA","/g' \
+		-e 's/LA \([0-9][0-9]*\)/LA","\1/g' \
+		-e 's/^\(ORL[0-9]*\),\("New Orleans"\)/\1,"",\2/' \
 		< raw/NORA_Uncommitted_Properties.csv > processed/nora/uncommitted_properties/uncommitted_properties.csv

@@ -13,3 +13,7 @@ def from_shapefile(strict=False, progress=True, verbose=False, **kwargs):
     parcel_shp = get_processed_data_file(os.path.join('parcels', 'parcels.shp'))
     mapping = LayerMapping(Parcel, parcel_shp, parcel_mapping, transform=False)
     mapping.save(strict=strict, progress=progress, verbose=verbose, **kwargs)
+
+
+def load(**kwargs):
+    from_shapefile(**kwargs)
