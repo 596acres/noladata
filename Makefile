@@ -67,7 +67,6 @@ download_nora_uncommitted:
 # Break address cells into multiple cells by comma and "LA "
 # Break coordinates into multiple cells by comma
 # Remove parentheses from coordinates
-#-e '/^ORL/ { N;N;s/\n/","/g; }'
 process_nora_uncommitted:
 	sed -e '/^ORL/,/,.$$/ {N;s/\n/","/; /,.$$/ !{N;s/\n/","/;}; }' \
 		-e '1,/Address/ s/Address/Address,City,State,Zip,Y,X/' \
