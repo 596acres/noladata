@@ -5,9 +5,10 @@ from django.core.management.base import BaseCommand, CommandError
 
 class Command(BaseCommand):
     args = 'dataset_name'
-    help = 'Loads NOLA data (buildings, parcels, ...)'
+    help = 'Loads NOLA data (addresses, buildings, parcels, ...)'
 
     datasets = {
+        'addresses': 'noladata.addresses',
         'buildings': 'noladata.buildings',
         'parcels': 'noladata.parcels',
     }
