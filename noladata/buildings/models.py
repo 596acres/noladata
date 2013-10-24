@@ -1,6 +1,12 @@
 from django.contrib.gis.db import models
 
 
+class BuildingManager(models.GeoManager):
+
+    def filter_by_parcel(self, parcel):
+        return self.filter(geom__intersects=parcel.geom)
+
+
 class Building(models.Model):
     """
     This is an auto-generated Django model module created by ogrinspect.
@@ -16,7 +22,7 @@ class Building(models.Model):
     shape_leng = models.FloatField(null=True, blank=True)
     shape_area = models.FloatField(null=True, blank=True)
     geom = models.MultiPolygonField(srid=4326)
-    objects = models.GeoManager()
+    objects = BuildingManager()
 
 
 # Auto-generated `LayerMapping` dictionary for Building model
