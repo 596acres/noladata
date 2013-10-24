@@ -1,4 +1,4 @@
-all: addresses buildings boundary parcels
+all: download_data process_addresses process_buildings process_boundary process_parcels
 
 clean: clean_db clean_processed
 
@@ -32,20 +32,28 @@ download_data:
 	curl -L "https://data.nola.gov/download/xy5r-5rjk/application/zip" -o raw/NOLA_Parcels_20130913.zip
 	unzip raw/NOLA_Parcels_20130913.zip -d raw/NOLA_Parcels_20130913
 
-addresses: prepare_processed
+process_addresses: prepare_processed
 	ogr2ogr -t_srs EPSG:4326 -overwrite processed/addresses/addresses.shp raw/NOLA_Addresses_20130913/NOLA_Addresses_20130913.shp
+
+import_addresses:
 	shp2pgsql -D -c -I processed/addresses/addresses.shp addresses | psql -d nola
 
-buildings: prepare_processed
+process_buildings: prepare_processed
 	ogr2ogr -simplify 0.2 -t_srs EPSG:4326 -overwrite processed/buildings/buildings.shp raw/BuildingOutlines2013/BuildingOutlines2013.shp
+
+import_buildings:
 	shp2pgsql -D -c -I processed/buildings/buildings.shp buildings | psql -d nola
 
-boundary: prepare_processed
+process_boundary: prepare_processed
 	ogr2ogr -simplify 0.2 -t_srs EPSG:4326 -overwrite processed/boundary/boundary.shp raw/NOLA_Boundary/NOLA_Boundary.shp
+
+import_boundary:
 	shp2pgsql -D -c -I processed/boundary/boundary.shp boundary | psql -d nola
 
-parcels: prepare_processed
+process_parcels: prepare_processed
 	ogr2ogr -simplify 0.2 -t_srs EPSG:4326 -overwrite processed/parcels/parcels.shp raw/NOLA_Parcels_20130913/NOLA_Parcels_20130913.shp
+
+import_parcels:
 	shp2pgsql -D -c -I processed/parcels/parcels.shp parcels | psql -d nola
 	psql -c "ALTER TABLE parcels ADD COLUMN full_address VARCHAR(100);" -d nola
 	psql -c "UPDATE parcels SET full_address = situs_numb || ' ' || situs_stre || ' ' || situs_type WHERE situs_dir IS NULL;" -d nola
