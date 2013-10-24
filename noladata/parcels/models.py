@@ -1,4 +1,19 @@
 from django.contrib.gis.db import models
+from django.db.models import Q
+
+from ..addresses.models import Address
+
+
+class ParcelManager(models.GeoManager):
+
+    def filter_by_address(self, address):
+        addresses = Address.objects.filter(address_la__iexact=address)
+        if not addresses.count():
+            return self.none()
+        query = Q()
+        for address in addresses:
+            query = query | Q(geom__contains=address.geom)
+        return self.filter(query)
 
 
 class Parcel(models.Model):
@@ -33,7 +48,7 @@ class Parcel(models.Model):
     shape_area = models.FloatField(null=True, blank=True)
     shape_len = models.FloatField(null=True, blank=True)
     geom = models.MultiPolygonField(srid=4326)
-    objects = models.GeoManager()
+    objects = ParcelManager()
 
 
 # Auto-generated `LayerMapping` dictionary for Parcel model
