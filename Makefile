@@ -11,7 +11,11 @@ prepare_processed:
 	mkdir -p processed/nora/uncommitted_properties
 
 clean_processed:
-	rm -rf processed
+	rm -rf processed/addresses
+	rm -rf processed/buildings
+	rm -rf processed/boundary
+	rm -rf processed/parcels
+	rm -rf processed/nora
 
 clean_db:
 	-psql -q -c "DROP TABLE addresses" -d nola

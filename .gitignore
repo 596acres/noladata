@@ -1,4 +1,8 @@
-processed
+processed/addresses
+processed/boundary
+processed/buildings
+processed/nora
+processed/parcels
 raw
 .*.swp
 *.pyc
