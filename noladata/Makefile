@@ -28,8 +28,8 @@ clean_data:
 
 download_data:
 	mkdir -p raw
-	curl -L "https://data.nola.gov/download/div8-5v7i/application/zip" -o raw/NOLA_Addresses_20130913.zip
-	unzip raw/NOLA_Addresses_20130913.zip -d raw/NOLA_Addresses_20130913
+	curl -L "https://data.nola.gov/download/div8-5v7i/application/zip" -o raw/NOLA_Addresses_20130918.zip
+	unzip raw/NOLA_Addresses_20130918.zip -d raw/NOLA_Addresses_20130918
 	curl -L "https://data.nola.gov/download/t3vb-bbwe/application/zip" -o raw/BuildingOutlines2013.zip
 	unzip raw/BuildingOutlines2013.zip -d raw/BuildingOutlines2013
 	curl -L "https://data.nola.gov/api/geospatial/2b2j-u6kh?method=export&format=Shapefile" -o raw/NOLA_Boundary.zip
@@ -38,7 +38,7 @@ download_data:
 	unzip raw/NOLA_Parcels_20130913.zip -d raw/NOLA_Parcels_20130913
 
 process_addresses: prepare_processed
-	ogr2ogr -t_srs EPSG:4326 -overwrite processed/addresses/addresses.shp raw/NOLA_Addresses_20130913/NOLA_Addresses_20130913.shp
+	ogr2ogr -t_srs EPSG:4326 -overwrite processed/addresses/addresses.shp raw/NOLA_Addresses_20130918/NOLA_Addresses_20130918.shp
 
 import_addresses:
 	shp2pgsql -D -c -I processed/addresses/addresses.shp addresses | psql -d nola
