@@ -1,6 +1,6 @@
 all: download_data process_addresses process_buildings process_boundary process_parcels
 
-clean: clean_db clean_processed
+clean: clean_db clean_processed clean_raw
 
 prepare_processed:
 	mkdir -p processed
@@ -22,7 +22,7 @@ clean_raw:
 	rm -rf raw/NOLA_Addresses*
 	rm -rf raw/NOLA_Boundary*
 	rm -rf raw/NOLA_Parcels*
-	rm -rf raw/nora
+	rm -rf raw/NORA_Uncommitted_Properties.csv
 
 clean_db:
 	-psql -q -c "DROP TABLE addresses" -d nola
