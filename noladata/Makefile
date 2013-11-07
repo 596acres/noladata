@@ -34,7 +34,7 @@ download_data:
 	unzip raw/BuildingOutlines2013.zip -d raw/BuildingOutlines2013
 	curl -L "https://data.nola.gov/api/geospatial/2b2j-u6kh?method=export&format=Shapefile" -o raw/NOLA_Boundary.zip
 	unzip raw/NOLA_Boundary.zip -d raw/NOLA_Boundary
-	curl -L "https://data.nola.gov/download/xy5r-5rjk/application/zip" -o raw/NOLA_Parcels_20130913.zip
+	curl -L "https://data.nola.gov/api/geospatial/e962-egyh?method=export&format=Shapefile" -o raw/NOLA_Parcels_20130913.zip
 	unzip raw/NOLA_Parcels_20130913.zip -d raw/NOLA_Parcels_20130913
 
 process_addresses: prepare_processed
