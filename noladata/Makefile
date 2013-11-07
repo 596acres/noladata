@@ -45,7 +45,7 @@ download_data:
 	unzip raw/NOLA_Parcels_20130913.zip -d raw/NOLA_Parcels_20130913
 
 process_addresses: prepare_processed
-	ogr2ogr -t_srs EPSG:4326 -overwrite processed/addresses/addresses.shp raw/NOLA_Addresses_20130918/NOLA_Addresses_20131018.shp
+	ogr2ogr -t_srs EPSG:4326 -overwrite processed/addresses/addresses.shp raw/NOLA_Addresses_20131018/NOLA_Addresses_20131018.shp
 
 import_addresses:
 	shp2pgsql -D -c -I processed/addresses/addresses.shp addresses | psql -d nola
