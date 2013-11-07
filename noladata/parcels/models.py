@@ -2,6 +2,7 @@ from django.contrib.gis.db import models
 from django.db.models import Q
 
 from ..addresses.models import Address
+from .util import format_street_address
 
 
 class ParcelManager(models.GeoManager):
@@ -49,6 +50,15 @@ class Parcel(models.Model):
     shape_len = models.FloatField(null=True, blank=True)
     geom = models.MultiPolygonField(srid=4326)
     objects = ParcelManager()
+
+    def _address(self):
+        return format_street_address(
+            house_number=self.situs_numb,
+            street_dir=self.situs_dir,
+            street_name=self.situs_stre,
+            street_type=self.situs_type,
+        )
+    address = property(_address)
 
 
 # Auto-generated `LayerMapping` dictionary for Parcel model
