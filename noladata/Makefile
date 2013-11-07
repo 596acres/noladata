@@ -41,8 +41,8 @@ download_data:
 	unzip raw/BuildingOutlines2013.zip -d raw/BuildingOutlines2013
 	curl -L "https://data.nola.gov/api/geospatial/2b2j-u6kh?method=export&format=Shapefile" -o raw/NOLA_Boundary.zip
 	unzip raw/NOLA_Boundary.zip -d raw/NOLA_Boundary
-	curl -L "https://data.nola.gov/api/geospatial/e962-egyh?method=export&format=Shapefile" -o raw/NOLA_Parcels_20130913.zip
-	unzip raw/NOLA_Parcels_20130913.zip -d raw/NOLA_Parcels_20130913
+	curl -L "https://data.nola.gov/api/geospatial/e962-egyh?method=export&format=Shapefile" -o raw/NOLA_Parcels_20131018.zip
+	unzip raw/NOLA_Parcels_20131018.zip -d raw/NOLA_Parcels_20131018
 
 process_addresses: prepare_processed
 	ogr2ogr -t_srs EPSG:4326 -overwrite processed/addresses/addresses.shp raw/NOLA_Addresses_20131018/NOLA_Addresses_20131018.shp
@@ -63,7 +63,7 @@ import_boundary:
 	shp2pgsql -D -c -I processed/boundary/boundary.shp boundary | psql -d nola
 
 process_parcels: prepare_processed
-	ogr2ogr -simplify 0.2 -t_srs EPSG:4326 -overwrite processed/parcels/parcels.shp raw/NOLA_Parcels_20130913/NOLA_Parcels_20130913.shp
+	ogr2ogr -simplify 0.2 -t_srs EPSG:4326 -overwrite processed/parcels/parcels.shp raw/NOLA_Parcels_20131018/NOLA_Parcels_20131018.shp
 
 import_parcels:
 	shp2pgsql -D -c -I processed/parcels/parcels.shp parcels | psql -d nola
