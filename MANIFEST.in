@@ -1,5 +1,3 @@
-include Makefile
 include README.md
-include processed
 include setup.py
-recursive-include noladata *.py
+recursive-include noladata *
