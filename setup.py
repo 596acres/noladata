@@ -31,6 +31,7 @@ setup(
     classifiers=CLASSIFIERS,
     install_requires=[
         'Django>=1.5.1',
+        'pyquery>=1.2.6',
     ],
     packages=find_packages(),
     include_package_data=True,
