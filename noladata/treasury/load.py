@@ -6,6 +6,15 @@ BASE_TAX_URL = 'http://services.nola.gov/service.aspx?load=treasury&Type=1&TaxBi
 
 
 def load_code_lien_information(tax_bill_number):
+    """
+    Get code lien information, for example:
+
+        http://services.nola.gov/service.aspx?load=treasury&Type=1&TaxBill=39W414211
+
+    Assessor's page:
+
+        http://qpublic9.qpublic.net/la_orleans_display.php?KEY=1847-MONTEGUTST
+    """
     d = open_tax_page(tax_bill_number)
     table = get_tax_items_table(d)
     tax_items = parse_tax_items_table(table)
