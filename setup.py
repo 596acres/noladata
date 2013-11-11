@@ -32,6 +32,7 @@ setup(
     install_requires=[
         'Django>=1.5.1',
         'pyquery>=1.2.6',
+        'requests>=2.0.1',
     ],
     packages=find_packages(),
     include_package_data=True,
