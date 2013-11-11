@@ -13,9 +13,16 @@ def combine_address(street_number, street_name, street_type=None,
     """
     Put an address in a format the assessor's site will understand
     """
+    # Assessor's site cuts street types off at two characters
+    street_type = street_type[:2]
+
+    # TODO make this work with ranged addresses eg "3604-3606 2nd St"
     street = ''.join([s.upper() for s
                       in (street_direction, street_name, street_type) if s])
-    return '%s-%s' % (street_number, street)
+    combined = '%s-%s' % (street_number, street)
+
+    # No spaces in combined address
+    return combined.replace(' ', '')
 
 
 def get_owner_and_parcel_information_table(d):
