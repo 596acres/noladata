@@ -17,6 +17,25 @@ class ParcelManager(models.GeoManager):
         return self.filter(query)
 
 
+class BuildingOverlap(models.Model):
+    building = models.ForeignKey('buildings.Building')
+    parcel_building_overlap = models.ForeignKey('parcels.ParcelBuildingOverlap')
+    percent_building_within_parcel = models.FloatField(default=0.0)
+
+
+class ParcelBuildingOverlap(models.Model):
+    """
+    Track the places where parcels are overlapped by buildings.
+    """
+    parcel = models.ForeignKey('parcels.Parcel')
+    buildings = models.ManyToManyField('buildings.Building',
+        null=True,
+        blank=True,
+        through='BuildingOverlap',
+    )
+    percent_parcel_covered = models.FloatField(default=0.0)
+
+
 class Parcel(models.Model):
     """
     This is an auto-generated Django model module created by ogrinspect.
