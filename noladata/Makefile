@@ -44,6 +44,9 @@ download_data:
 	curl -L "https://data.nola.gov/api/geospatial/e962-egyh?method=export&format=Shapefile" -o raw/NOLA_Parcels_20131018.zip
 	unzip raw/NOLA_Parcels_20131018.zip -d raw/NOLA_Parcels_20131018
 
+	# TODO
+	# https://data.nola.gov/Geographic-Reference/NOLA-Zip-Code-Tabulation-Areas-2010/rgeq-44vf
+
 process_addresses: prepare_processed
 	ogr2ogr -t_srs EPSG:4326 -overwrite processed/addresses/addresses.shp raw/NOLA_Addresses_20131018/NOLA_Addresses_20131018.shp
 
