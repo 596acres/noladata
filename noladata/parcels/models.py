@@ -79,6 +79,12 @@ class Parcel(models.Model):
         )
     address = property(_address)
 
+    def calculate_area(self):
+        try:
+            return self.geom.transform(3452, clone=True).area
+        except Exception:
+            return 0
+
 
 # Auto-generated `LayerMapping` dictionary for Parcel model
 parcel_mapping = {

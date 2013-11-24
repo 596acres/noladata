@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+    <script>
+        var map,
+            parcels,
+            baseUrl = '/parcels/overlap/?',
+            detailUrl = '/parcels/overlap/details/';
+
+        function getParams() {
+            return {
+                area_gt: $(':input#area_gt').val(),
+                area_lte: $(':input#area_lte').val(),
+                percent_gt: $(':input#percent_gt').val(),
+                percent_lte: $(':input#percent_lte').val()
+            }
+        }
+
+        function addParcelsLayer(map) {
+            $.getJSON(baseUrl + $.param(getParams()), function (data) {
+                parcels = L.geoJson(data, {
+
+                    onEachFeature: function (feature, layer) {
+                        var content = feature.properties.percent_overlap + '%';
+                        content += '<br /><a target="_blank" href="' + detailUrl + 
+                            feature.properties.id + '/">details</a>';
+                        layer.bindPopup(content);
+                    },
+
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng, {
+                            radius: 5,
+                            color: '#00f'
+                        });
+                    }
+
+                }).addTo(map);
+            });
+        }
+
+        $(document).ready(function () {
+            map = L.map('map').setView([30.01, -90.07], 13);
+            L.tileLayer('http://{s}.tile.cloudmade.com/781b27aa166a49e1a398cd9b38a81cdf/997/256/{z}/{x}/{y}.png', {
+                maxZoom: 18
+            }).addTo(map);
+
+            addParcelsLayer(map);
+            $(':input').change(function () {
+                parcels.clearLayers();
+                addParcelsLayer(map);
+            });
+        });
+    </script>
+    <div>
+        area between
+        <input type="text" id="area_gt" value="0" />
+        and
+        <input type="text" id="area_lte" value="10000" />
+        square feet
+    </div>
+    <div>
+        percent overlap between
+        <input type="text" id="percent_gt" value="0" />
+        and
+        <input type="text" id="percent_lte" value=".1" />
+    </div>
+    <div id="map" style="width: 100%; height: 500px;"></div>
+{% endblock %}
