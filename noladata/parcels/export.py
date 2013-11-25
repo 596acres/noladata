@@ -42,6 +42,6 @@ def plot(filename='area_and_overlap.csv'):
     ax.set_ylabel('parcel area (sq ft, log)')
     ax.set_yscale('log')
 
-    ax.set_xlabel('%% of parcel that overlaps with building polygons')
+    ax.set_xlabel('% of parcel that overlaps with building polygons')
     ax.plot(overlaps, areas, 'o', c='blue', alpha=0.05, markeredgecolor='none')
     show()
