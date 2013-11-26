@@ -85,6 +85,22 @@ class Parcel(models.Model):
         except Exception:
             return 0
 
+    def probably_is_vacant(self):
+        """
+        Determine whether this parcel is vacant or not based solely on the
+        area of the parcel and the percentage of its geometry that is covered
+        by building parcels.
+
+        The formula used here was determined by plotting areas against
+        percentage covered and finding a line that seems to separate vacant
+        parcels from parcels that are not vacant based on visual inspection.
+        """
+        percent_overlap = self.parcelbuildingoverlap_set.all()[0].percent_parcel_covered
+        if percent_overlap == 0:
+            return True
+        area = self.calculate_area()
+        return area < ((-900 * percent_overlap) + 10000)
+
 
 # Auto-generated `LayerMapping` dictionary for Parcel model
 parcel_mapping = {

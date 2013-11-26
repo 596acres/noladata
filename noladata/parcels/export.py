@@ -5,10 +5,15 @@ from .models import Parcel
 
 def area_and_overlap_csv(filename='area_and_overlap.csv'):
     writer = csv.writer(open(filename, 'wb'))
-    writer.writerow(['area (sq ft)', 'percent covered'])
+    writer.writerow(['geopin', 'area (sq ft)', 'percent covered', 'vacant'])
     for parcel in Parcel.objects.all():
         pbo = parcel.parcelbuildingoverlap_set.all()[0]
-        writer.writerow([parcel.calculate_area(), pbo.percent_parcel_covered])
+        writer.writerow([
+            parcel.geopin,
+            parcel.calculate_area(),
+            pbo.percent_parcel_covered,
+            parcel.probably_is_vacant(),
+        ])
 
 
 def plot(filename='area_and_overlap.csv'):
