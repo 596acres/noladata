@@ -2,6 +2,7 @@ from django.contrib.gis.db import models
 from django.db.models import Q
 
 from ..addresses.models import Address
+from ..buildings.models import Building
 from .util import format_street_address
 
 
@@ -85,6 +86,38 @@ class Parcel(models.Model):
         except Exception:
             return 0
 
+    def calculate_building_overlap(self):
+        """
+        Find out how much of the given parcel is covered by buildings according
+        to the city's shapefiles.
+        """
+        srid = 3452
+        total_intersect = 0
+        parcel_geometry = self.geom
+        parcel_geometry.transform(srid)
+        parcel_building_overlap = ParcelBuildingOverlap(parcel=self)
+
+        # For each building, calculate how much it overlaps with the given
+        # parcel and add this to the total
+        buildings = Building.objects.filter_by_parcel(self)
+        for building in buildings:
+            building_geometry = building.geom
+            building_geometry.transform(srid)
+            intersection = parcel_geometry.intersection(building_geometry)
+            total_intersect += intersection.area
+            building_overlap = BuildingOverlap(
+                building=building,
+                parcel_building_overlap=parcel_building_overlap,
+                percent_building_within_parcel=(intersection.area / building_geometry.area) * 100,
+            )
+            building_overlap.save()
+
+        # Calculate and save the total
+        percent_parcel_covered = (total_intersect / parcel_geometry.area) * 100
+        parcel_building_overlap.percent_parcel_covered = percent_parcel_covered
+        parcel_building_overlap.save()
+        return parcel_building_overlap
+
     def probably_is_vacant(self):
         """
         Determine whether this parcel is vacant or not based solely on the
@@ -95,9 +128,18 @@ class Parcel(models.Model):
         percentage covered and finding a line that seems to separate vacant
         parcels from parcels that are not vacant based on visual inspection.
         """
-        percent_overlap = self.parcelbuildingoverlap_set.all()[0].percent_parcel_covered
+        # Get overlap record. If overlap does not exist, calculate.
+        if not self.parcelbuildingoverlap_set.count():
+            parcel_building_overlap = self.calculate_building_overlap()
+        else:
+            parcel_building_overlap = self.parcelbuildingoverlap_set.all()[0]
+        percent_overlap = parcel_building_overlap.percent_parcel_covered
+
+        # If there are no buildings overlapping at all, probably vacant
         if percent_overlap == 0:
             return True
+
+        # Else try to guess based on the area and overlap
         area = self.calculate_area()
         return area < ((-900 * percent_overlap) + 10000)
 
