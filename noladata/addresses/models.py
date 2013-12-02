@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 
+
 class Address(models.Model):
     """
     This is an auto-generated Django model module created by ogrinspect.
