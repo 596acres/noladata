@@ -1,4 +1,78 @@
+import re
+
 from django.contrib.gis.db import models
+from django.db.models import Q
+
+
+directions = {
+    'north': 'n',
+    'east': 'e',
+    'south': 's',
+    'west': 'w',
+}
+
+
+# Common street types found in the City of New Orleans' address shapefile
+street_types = {
+    'alley': 'aly',
+    'avenue': 'ave',
+    'boulevard': 'blvd',
+    'court': 'ct',
+    'drive': 'dr',
+    'expressway': 'expy',
+    'highway': 'hwy',
+    'lane': 'ln',
+    'parkway': 'pkwy',
+    'place': 'pl',
+    'plaza': 'plz',
+    'road': 'rd',
+    'street': 'st',
+    'terrace': 'ter',
+    'trace': 'trce',
+    'trail': 'trl',
+}
+
+
+def get_potential_addresses(address):
+    """
+    Get permutations of as many potential addresses as we can make out of
+    the given address.
+
+    Permutations include the address with all punctuation removed, the
+    address with directions abbreviated, and the address with street types
+    abbreviated (as they are in the City of New Orleans' addresses
+    shapefile).
+    """
+    addresses = set()
+    addresses.add(address.lower())
+
+    # Try removing punctuation from the address
+    for address in list(addresses):
+        addresses.add(re.subn('[^\s\w]', '', address)[0])
+
+    #  Try abbreviating directions
+    for address in list(addresses):
+        abbreviated = address
+        for direction, abbr in directions.items():
+            abbreviated = re.subn(r'\b%s\b' % direction, abbr, abbreviated)[0]
+        addresses.add(abbreviated)
+
+    # Abbreviate street types
+    for address in list(addresses):
+        for street_type, abbr in street_types.items():
+            abbreviated = re.subn(r'\b%s\b' % street_type, abbr, address)[0]
+            addresses.add(abbreviated)
+
+    return tuple(addresses)
+
+
+class AddressManager(models.GeoManager):
+
+    def filter_by_full_address_fuzzy(self, address):
+        query = Q()
+        for address in get_potential_addresses(address):
+            query = query | Q(address_la__iexact=address)
+        return self.filter(query)
 
 
 class Address(models.Model):
@@ -31,7 +105,7 @@ class Address(models.Model):
     status = models.CharField(max_length=10, null=True, blank=True)
     in_date = models.DateField(null=True, blank=True)
     geom = models.PointField(srid=4326)
-    objects = models.GeoManager()
+    objects = AddressManager()
 
 
 # Auto-generated `LayerMapping` dictionary for Address model

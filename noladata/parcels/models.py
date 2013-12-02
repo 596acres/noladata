@@ -17,6 +17,24 @@ class ParcelManager(models.GeoManager):
             query = query | Q(geom__contains=address.geom)
         return self.filter(query)
 
+    def filter_by_address_fuzzy(self, address):
+        """
+        Filter by address in a fuzzier way that will accept more inputs, such
+        as addresses where the street type and/or street direction is not
+        abbreviated.
+        """
+        # Find all addresses that could potentially be the one we're looking
+        # for
+        addresses = Address.objects.filter_by_full_address_fuzzy(address)
+        if not addresses.count():
+            return self.none()
+
+        # Find all parcels that contain those addresses
+        query = Q()
+        for address in addresses:
+            query = query | Q(geom__contains=address.geom)
+        return self.filter(query)
+
 
 class BuildingOverlap(models.Model):
     building = models.ForeignKey('buildings.Building')
