@@ -11,6 +11,7 @@ class Command(BaseCommand):
     datasets = {
         'addresses': 'noladata.addresses',
         'buildings': 'noladata.buildings',
+        'hano': 'noladata.hano',
         'nora': 'noladata.nora',
         'parcels': 'noladata.parcels',
     }
