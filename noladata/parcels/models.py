@@ -89,6 +89,12 @@ class Parcel(models.Model):
     geom = models.MultiPolygonField(srid=4326)
     objects = ParcelManager()
 
+    def __unicode__(self):
+        try:
+            return 'Parcel: %s, %s' % (self.geopin, self.address)
+        except Exception:
+            return 'Parcel: %d' % self.pk
+
     def _address(self):
         return format_street_address(
             house_number=self.situs_numb,
