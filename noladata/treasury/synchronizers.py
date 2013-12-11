@@ -14,12 +14,6 @@ from .load import load_code_lien_information
 from .models import Lien, ParcelLienRecord
 
 
-def get_tax_bill_number(parcel):
-    return load_tax_bill_number(parcel.situs_numb, parcel.situs_stre,
-                                parcel.situs_type,
-                                street_direction=parcel.situs_dir)
-
-
 def parse_delinquency_date(date):
     return datetime.strptime(date, '%m/%d/%y')
 
@@ -114,16 +108,17 @@ class LienSynchronizer(synchronizers.Synchronizer):
 
     def sync(self, data_source):
         for parcel in self.pick_parcels(data_source):
-            print parcel,
-            tax_bill_number = get_tax_bill_number(parcel)
+            print parcel
+            tax_bill_number = load_tax_bill_number(parcel)
             if not tax_bill_number:
                 print ('Could not find tax_bill_number for parcel with pk %d'
                        % parcel.pk)
             else:
+                # TODO try to be more defensive about exceptions here
                 code_lien_information = load_code_lien_information(tax_bill_number)
-                print tax_bill_number,
+                print '\t', tax_bill_number
                 for code_lien in code_lien_information:
-                    print code_lien
+                    print '\t', code_lien
                     create_or_update_lien(parcel, code_lien)
 
             update_parcel_lien_record(parcel)
