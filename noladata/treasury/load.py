@@ -1,8 +1,7 @@
 from itertools import ifilter
 from pyquery import PyQuery
 
-
-BASE_TAX_URL = 'http://services.nola.gov/service.aspx?load=treasury&Type=1&TaxBill='
+from django.conf import settings
 
 
 def load_code_lien_information(tax_bill_number):
@@ -14,6 +13,21 @@ def load_code_lien_information(tax_bill_number):
     Assessor's page:
 
         http://qpublic9.qpublic.net/la_orleans_display.php?KEY=1847-MONTEGUTST
+
+    Returned iterator will contain items like:
+
+        {
+            'City Fee': '$0.00',
+            'Code': '',
+            'Collection Fee': '$1,484.38',
+            'Delinquency Date': '06/02/12',
+            'Interest': '$0.00',
+            'Period': '2012',
+            'Tax or Lien': '$15,625.00',
+            'Total': '$17,109.38',
+            'Type': 'Code Enforcement Lien'
+        }
+
     """
     d = open_tax_page(tax_bill_number)
     table = get_tax_items_table(d)
@@ -23,7 +37,8 @@ def load_code_lien_information(tax_bill_number):
 
 
 def open_tax_page(tax_bill_number):
-    return PyQuery(url=BASE_TAX_URL + tax_bill_number)
+    return PyQuery(url=settings.NOLADATA_TREASURY_BASE_TAX_URL + tax_bill_number,
+                   headers={ 'user-agent': settings.NOLADATA_TREASURY_UA })
 
 
 def get_tax_items_table(d):
