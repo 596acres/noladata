@@ -109,11 +109,13 @@ class LienSynchronizer(synchronizers.Synchronizer):
     def sync(self, data_source):
         for parcel in self.pick_parcels(data_source):
             print parcel
-            tax_bill_number = load_tax_bill_number(parcel)
-            if not tax_bill_number:
+            try:
+                tax_bill_number = load_tax_bill_number(parcel)
+            except Exception:
                 print ('Could not find tax_bill_number for parcel with pk %d'
                        % parcel.pk)
-            else:
+
+            if tax_bill_number:
                 # TODO try to be more defensive about exceptions here
                 code_lien_information = load_code_lien_information(tax_bill_number)
                 print '\t', tax_bill_number

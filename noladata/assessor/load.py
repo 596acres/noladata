@@ -33,19 +33,16 @@ def get_assessor_record(parcel):
         return ParcelAssessorRecord.objects.get(parcel=parcel)
     except ParcelAssessorRecord.DoesNotExist:
         d = PyQuery(url=NOLADATA_ASSESSOR_SUMMARY_URL + str(parcel.geopin))
-        try:
-            assessor_record = ParcelAssessorRecord(
-                address=get_assessor_summary_value_text(d, 'Location Address'),
-                key=get_assessor_summary_value(d, 'Selected Parcel').find('a').text(),
-                owner_name=get_assessor_summary_value_text(d, 'Name'),
-                owner_address=get_assessor_summary_value_text(d, 'Mailing Address'),
-                parcel=parcel,
-                property_class=get_assessor_summary_value_text(d, 'Property Class'),
-            )
-            assessor_record.save()
-            return assessor_record
-        except Exception:
-            return None
+        assessor_record = ParcelAssessorRecord(
+            address=get_assessor_summary_value_text(d, 'Location Address'),
+            key=get_assessor_summary_value(d, 'Selected Parcel').find('a').text(),
+            owner_name=get_assessor_summary_value_text(d, 'Name'),
+            owner_address=get_assessor_summary_value_text(d, 'Mailing Address'),
+            parcel=parcel,
+            property_class=get_assessor_summary_value_text(d, 'Property Class'),
+        )
+        assessor_record.save()
+        return assessor_record
 
 
 def get_owner_and_parcel_information_table(d):
