@@ -35,13 +35,15 @@ def lien_kwargs(parcel, lien):
 
 def create_or_update_lien(parcel, lien):
     kwargs = lien_kwargs(parcel, lien)
-    try:
-        saved_lien = Lien.objects.get(
-            parcel=parcel,
-            period=kwargs['period'],
-            type=kwargs['type']
-        ).update(**kwargs)
-    except Lien.DoesNotExist:
+    existing_lien = Lien.objects.filter(
+        parcel=parcel,
+        period=kwargs['period'],
+        type=kwargs['type']
+    )
+    if existing_lien.count() == 1:
+        existing_lien.update(**kwargs)
+        saved_lien = existing_lien[0]
+    else:
         saved_lien = Lien(**kwargs)
         saved_lien.save()
     return saved_lien
