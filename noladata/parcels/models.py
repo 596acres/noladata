@@ -120,6 +120,7 @@ class Parcel(models.Model):
         parcel_geometry = self.geom
         parcel_geometry.transform(srid)
         parcel_building_overlap = ParcelBuildingOverlap(parcel=self)
+        parcel_building_overlap.save()
 
         # For each building, calculate how much it overlaps with the given
         # parcel and add this to the total
