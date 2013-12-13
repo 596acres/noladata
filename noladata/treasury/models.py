@@ -3,6 +3,7 @@ from django.db import models
 
 class ParcelLienRecord(models.Model):
     last_checked = models.DateTimeField()
+    tax_bill_number = models.CharField(max_length=25, null=True, blank=True)
     parcel = models.ForeignKey('parcels.Parcel')
 
 

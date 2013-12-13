@@ -49,7 +49,7 @@ def create_or_update_lien(parcel, lien):
     return saved_lien
 
 
-def update_parcel_lien_record(parcel):
+def update_parcel_lien_record(parcel, tax_bill_number):
     """
     Create or update ParcelLienRecord for this parcel.
 
@@ -57,11 +57,39 @@ def update_parcel_lien_record(parcel):
     """
     parcel_lien_record, created = ParcelLienRecord.objects.get_or_create(
         parcel=parcel,
-        defaults={ 'last_checked': now() }
+        defaults={ 'last_checked': now(), 'tax_bill_number': tax_bill_number }
     )
     if not created:
         parcel_lien_record.last_checked = now()
+        parcel_lien_record.tax_bill_number = tax_bill_number
         parcel_lien_record.save()
+
+
+class TaxBillNumberSynchronizer(synchronizers.Synchronizer):
+    """
+    Simple synchronizer to update the tax bill numbers that we neglected to
+    collect earlier.
+    """
+
+    def wait(self):
+        """Wait a bit between parcels / external requests"""
+        sleep(2 * random())
+
+    def pick_parcels(self, data_source):
+        parcels = Parcel.objects.exclude(parcellienrecord=None)
+        return parcels.filter(
+            parcellienrecord__tax_bill_number=None,
+        ).order_by('?')
+
+    def sync(self, data_source):
+        for parcel in self.pick_parcels(data_source):
+            try:
+                tax_bill_number = load_tax_bill_number(parcel)
+                update_parcel_lien_record(parcel, tax_bill_number)
+            except Exception:
+                print ('Could not find tax_bill_number for parcel with pk %d'
+                       % parcel.pk)
+                continue
 
 
 class LienSynchronizer(synchronizers.Synchronizer):
@@ -125,8 +153,9 @@ class LienSynchronizer(synchronizers.Synchronizer):
                     print '\t', code_lien
                     create_or_update_lien(parcel, code_lien)
 
-            update_parcel_lien_record(parcel)
+            update_parcel_lien_record(parcel, tax_bill_number)
             self.wait()
 
 
 register(LienSynchronizer)
+register(TaxBillNumberSynchronizer)
