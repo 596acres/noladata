@@ -14,6 +14,7 @@ class Command(BaseCommand):
         'hano': 'noladata.hano',
         'nora': 'noladata.nora',
         'parcels': 'noladata.parcels',
+        'zipcodes': 'noladata.zipcodes',
     }
 
     def handle(self, dataset_name, *args, **options):
