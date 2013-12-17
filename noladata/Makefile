@@ -8,6 +8,7 @@ prepare_processed:
 	mkdir -p processed/addresses
 	mkdir -p processed/buildings
 	mkdir -p processed/boundary
+	mkdir -p processed/councildistricts
 	mkdir -p processed/parcels
 	mkdir -p processed/nora/uncommitted_properties
 	mkdir -p processed/zipcodes
@@ -24,6 +25,7 @@ clean_raw:
 	rm -rf raw/BuildingOutlines*
 	rm -rf raw/NOLA_Addresses*
 	rm -rf raw/NOLA_Boundary*
+	rm -rf raw/NOLA_City_Council_Districts*
 	rm -rf raw/NOLA_Parcels*
 	rm -rf raw/NORA_Uncommitted_Properties.csv
 	rm -rf raw/NOLA_ZipCodes*
@@ -48,6 +50,7 @@ download_data:
 	curl -L "https://data.nola.gov/api/geospatial/e962-egyh?method=export&format=Shapefile" -o raw/NOLA_Parcels_20131018.zip
 	unzip raw/NOLA_Parcels_20131018.zip -d raw/NOLA_Parcels_20131018
 	download_zipcodes
+	download_councildistricts
 
 process_addresses: prepare_processed
 	ogr2ogr -t_srs EPSG:4326 -overwrite processed/addresses/addresses.shp raw/NOLA_Addresses_20131018/NOLA_Addresses_20131018.shp
@@ -82,6 +85,13 @@ process_zipcodes: prepare_processed
 download_zipcodes:
 	curl -L "https://data.nola.gov/api/geospatial/rgeq-44vf?method=export&format=Shapefile" -o raw/NOLA_ZipCodes.zip
 	unzip raw/NOLA_ZipCodes.zip -d raw/NOLA_ZipCodes
+
+download_councildistricts:
+	curl -L "https://data.nola.gov/api/geospatial/vjam-567i?method=export&format=Shapefile" -o raw/NOLA_City_Council_Districts.zip
+	unzip raw/NOLA_City_Council_Districts.zip -d raw/NOLA_City_Council_Districts
+
+process_councildistricts: prepare_processed
+	ogr2ogr -simplify 0.2 -t_srs EPSG:4326 -overwrite processed/councildistricts/councildistricts.shp raw/NOLA_City_Council_Districts/NOLA_Council_District.shp
 
 download_nora_uncommitted:
 	curl -L "https://data.nola.gov/api/views/5ktx-e9wc/rows.csv?accessType=DOWNLOAD" -o raw/NORA_Uncommitted_Properties.csv
