@@ -13,6 +13,7 @@ class Command(BaseCommand):
         'buildings': 'noladata.buildings',
         'councildistricts': 'noladata.councildistricts',
         'hano': 'noladata.hano',
+        'neighborhoodgroups': 'noladata.neighborhoodgroups',
         'nora': 'noladata.nora',
         'parcels': 'noladata.parcels',
         'zipcodes': 'noladata.zipcodes',

@@ -31,6 +31,8 @@ setup(
     classifiers=CLASSIFIERS,
     install_requires=[
         'Django>=1.5.1',
+        'fastkml>=0.5',
+        'lxml>=3.1.0',
         'pyquery>=1.2.6',
         'requests>=2.0.1',
     ],
