@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 from .views import (OverlapDetailView, OverlapDetailGeoJSONView,
-                    OverlapGeoJSONView, OverlapMapView)
+                    OverlapGeoJSONView, OverlapMapView, GeoJSONPolygonView)
 
 
 urlpatterns = patterns('',
@@ -17,5 +17,7 @@ urlpatterns = patterns('',
         name='parcel_overlap_map'),
 
     url(r'^overlap/', OverlapGeoJSONView.as_view(), name='parcel_overlap'),
+
+    url(r'^geojson/', GeoJSONPolygonView.as_view(), name='parcel_geojson'),
 
 )
