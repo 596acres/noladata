@@ -1,7 +1,9 @@
 from django.contrib.gis.db import models
 
+from inplace.boundaries.models import BaseBoundary
 
-class ZoningDistrict(models.Model):
+
+class ZoningDistrict(BaseBoundary):
     objectid = models.IntegerField(null=True, blank=True)
     zoneclass = models.CharField(max_length=8, null=True, blank=True)
     zonedesc = models.CharField(max_length=100, null=True, blank=True)
@@ -23,12 +25,12 @@ class ZoningDistrict(models.Model):
     flu_link = models.CharField(max_length=254, null=True, blank=True)
     shape_area = models.FloatField(null=True, blank=True)
     shape_len = models.FloatField(null=True, blank=True)
-    geom = models.MultiPolygonField(srid=4326)
     objects = models.GeoManager()
 
 
 zoningdistrict_mapping = {
     'objectid' : 'OBJECTID',
+    'label' : 'ZONECLASS',
     'zoneclass' : 'ZONECLASS',
     'zonedesc' : 'ZONEDESC',
     'zonenum' : 'ZONENUM',
@@ -49,5 +51,5 @@ zoningdistrict_mapping = {
     'flu_link' : 'FLU_LINK',
     'shape_area' : 'Shape_area',
     'shape_len' : 'Shape_len',
-    'geom' : 'POLYGON',
+    'geometry' : 'POLYGON',
 }

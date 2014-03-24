@@ -11,6 +11,9 @@ class Migration(SchemaMigration):
         # Adding model 'ZoningDistrict'
         db.create_table(u'zoning_zoningdistrict', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=256)),
+            ('geometry', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')()),
+            ('simplified_geometry', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(null=True, blank=True)),
             ('objectid', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
             ('zoneclass', self.gf('django.db.models.fields.CharField')(max_length=8, null=True, blank=True)),
             ('zonedesc', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
@@ -32,7 +35,6 @@ class Migration(SchemaMigration):
             ('flu_link', self.gf('django.db.models.fields.CharField')(max_length=254, null=True, blank=True)),
             ('shape_area', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
             ('shape_len', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')()),
         ))
         db.send_create_signal(u'zoning', ['ZoningDistrict'])
 
@@ -51,9 +53,10 @@ class Migration(SchemaMigration):
             'flu_desc': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'flu_link': ('django.db.models.fields.CharField', [], {'max_length': '254', 'null': 'True', 'blank': 'True'}),
             'futlanduse': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {}),
+            'geometry': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {}),
             'hyperlink': ('django.db.models.fields.CharField', [], {'max_length': '254', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
             'lasteditor': ('django.db.models.fields.CharField', [], {'max_length': '5', 'null': 'True', 'blank': 'True'}),
             'lastupdate': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'objectid': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
@@ -61,6 +64,7 @@ class Migration(SchemaMigration):
             'ordnum1': ('django.db.models.fields.CharField', [], {'max_length': '254', 'null': 'True', 'blank': 'True'}),
             'shape_area': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'shape_len': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'simplified_geometry': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {'null': 'True', 'blank': 'True'}),
             'zoneclass': ('django.db.models.fields.CharField', [], {'max_length': '8', 'null': 'True', 'blank': 'True'}),
             'zoneclass1': ('django.db.models.fields.CharField', [], {'max_length': '254', 'null': 'True', 'blank': 'True'}),
             'zonedesc': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
