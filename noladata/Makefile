@@ -12,6 +12,7 @@ prepare_processed:
 	mkdir -p processed/parcels
 	mkdir -p processed/nora/uncommitted_properties
 	mkdir -p processed/zipcodes
+	mkdir -p processed/zoning
 
 clean_processed:
 	rm -rf processed/addresses
@@ -21,6 +22,7 @@ clean_processed:
 	rm -rf processed/parcels
 	rm -rf processed/nora
 	rm -rf processed/zipcodes
+	rm -rf processed/zoning
 
 clean_raw:
 	rm -rf raw/BuildingOutlines*
@@ -30,6 +32,7 @@ clean_raw:
 	rm -rf raw/NOLA_Parcels*
 	rm -rf raw/NORA_Uncommitted_Properties.csv
 	rm -rf raw/NOLA_ZipCodes*
+	rm -rf raw/NOLA_Zoning*
 
 clean_db:
 	-psql -q -c "DROP TABLE addresses" -d nola
@@ -109,3 +112,10 @@ process_nora_uncommitted:
 		-e 's/LA \([0-9][0-9]*\)/LA","\1/g' \
 		-e 's/^\(ORL[0-9]*\),\("New Orleans"\)/\1,"",\2/' \
 		< raw/NORA_Uncommitted_Properties.csv > processed/nora/uncommitted_properties/uncommitted_properties.csv
+
+download_zoning:
+	curl -L "https://data.nola.gov/download/fhra-haa6/application/zip" -o raw/NOLA_Zoning.zip
+	unzip raw/NOLA_Zoning.zip -d raw/NOLA_Zoning
+
+process_zoning: prepare_processed
+	ogr2ogr -simplify 0.2 -t_srs EPSG:4326 -overwrite processed/zoning/zoning.shp raw/NOLA_Zoning/NOLA_Zoning*.shp

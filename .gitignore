@@ -4,6 +4,7 @@ noladata/processed/buildings
 noladata/processed/nora
 noladata/processed/parcels
 noladata/processed/zipcodes
+noladata/processed/zoning
 raw
 .*.swp
 *.pyc
