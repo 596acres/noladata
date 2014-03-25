@@ -13,9 +13,9 @@ def from_shapefile(strict=False, progress=True, verbose=False,
     """
     shp = get_processed_data_file(os.path.join('zoning', 'zoning.shp'))
     mapping = LayerMapping(ZoningDistrict, shp, zoningdistrict_mapping,
-                           transform=False)
+                           encoding=encoding, transform=False)
     mapping.save(strict=strict, progress=progress, verbose=verbose,
-                 encoding=encoding, **kwargs)
+                 **kwargs)
 
 
 def load(**kwargs):
