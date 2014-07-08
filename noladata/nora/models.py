@@ -32,5 +32,14 @@ class UncommittedProperty(models.Model):
         null=True,
         blank=True,
     )
+    STATUS_CHOICES = (
+        ('current', 'current'),
+        ('old', 'old'),
+    )
+    status = models.CharField(
+        max_length=20,
+        default='current',
+        choices=STATUS_CHOICES,
+    )
     geom = models.PointField()
     objects = models.GeoManager()

@@ -98,19 +98,24 @@ process_councildistricts: prepare_processed
 	ogr2ogr -simplify 0.2 -t_srs EPSG:4326 -overwrite processed/councildistricts/councildistricts.shp raw/NOLA_City_Council_Districts/NOLA_Council_District.shp
 
 download_nora_uncommitted:
+	# Download latest Uncommitted Properties file
 	curl -L "https://data.nola.gov/api/views/5ktx-e9wc/rows.csv?accessType=DOWNLOAD" -o raw/NORA_Uncommitted_Properties.csv
+
+	# Archive latest Uncommitted Properties file
+	-mkdir raw/NORA_Uncommitted_Properties
+	cp raw/NORA_Uncommitted_Properties.csv raw/NORA_Uncommitted_Properties/$(shell date +%Y%m%d).csv
 
 # Break Property Address cells into multiple cells by newline
 # Break address cells into multiple cells by comma and "LA "
 # Break coordinates into multiple cells by comma
 # Remove parentheses from coordinates
 process_nora_uncommitted:
-	sed -e '/^ORL/,/,.$$/ {N;s/\n/","/; /,.$$/ !{N;s/\n/","/;}; }' \
+	sed -e '/^\(?:ORL\|NOR\)/,/,.$$/ {N;s/\n/","/; /,.$$/ !{N;s/\n/","/;}; }' \
 		-e '1,/Address/ s/Address/Address,City,State,Zip,Y,X/' \
 		-e 's/, /","/g' \
-		-e 's/(//' -e 's/)//' \
+		-e 's/(//g' -e 's/)//g' \
 		-e 's/LA \([0-9][0-9]*\)/LA","\1/g' \
-		-e 's/^\(ORL[0-9]*\),\("New Orleans"\)/\1,"",\2/' \
+		-e 's/^\(\(?:ORL\|NOR\)[0-9]*\),\("New Orleans"\)/\1,"",\2/' \
 		< raw/NORA_Uncommitted_Properties.csv > processed/nora/uncommitted_properties/uncommitted_properties.csv
 
 download_zoning:
