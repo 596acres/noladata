@@ -41,5 +41,7 @@ class UncommittedProperty(models.Model):
         default='current',
         choices=STATUS_CHOICES,
     )
+    added = models.DateTimeField(auto_now_add=True, null=True, editable=False)
+    updated = models.DateTimeField(auto_now=True, null=True, editable=False)
     geom = models.PointField()
     objects = models.GeoManager()
