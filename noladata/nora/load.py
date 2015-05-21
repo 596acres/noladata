@@ -15,14 +15,14 @@ def save_row(row):
     If the row already exists, make it current. Otherwise create it as new.
     """
     kwargs = {
-        'city': row['City'],
-        'state': row['State'],
-        'zip': row['Zip'],
-        'geom': Point(float(row['X']), float(row['Y'])),
+        'city': row['City'].strip(),
+        'state': row['State'].strip(),
+        'zip': row['Zip'].strip(),
+        'geom': Point(float(row['X'].strip()), float(row['Y'].strip())),
     }
     instance, created = UncommittedProperty.objects.get_or_create(
-        identifier=row['Identifier'],
-        property_address=row['Property Address'],
+        identifier=row['Identifier'].strip(),
+        property_address=row['Property Address'].strip(),
         defaults=kwargs
     )
     instance.status = 'current'
