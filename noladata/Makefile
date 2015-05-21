@@ -110,12 +110,12 @@ download_nora_uncommitted:
 # Break coordinates into multiple cells by comma
 # Remove parentheses from coordinates
 process_nora_uncommitted:
-	sed -e '/^\(?:ORL\|NOR\)/,/,.$$/ {N;s/\n/","/; /,.$$/ !{N;s/\n/","/;}; }' \
-		-e '1,/Address/ s/Address/Address,City,State,Zip,Y,X/' \
+	sed -e '1,/Address/ s/Address/Address,City,State,Zip,Y,X/' \
+		-e 's/New Orleans, Louisiana\s/, New Orleans, LA, /' \
+		-e 's/New Orleans, Louisiana/, New Orleans, LA, , /' \
 		-e 's/, /","/g' \
 		-e 's/(//g' -e 's/)//g' \
-		-e 's/LA \([0-9][0-9]*\)/LA","\1/g' \
-		-e 's/^\(\(?:ORL\|NOR\)[0-9]*\),\("New Orleans"\)/\1,"",\2/' \
+		-e 's/"\(7[0-9]\{4\}\)\b/"\1","/g' \
 		< raw/NORA_Uncommitted_Properties.csv > processed/nora/uncommitted_properties/uncommitted_properties.csv
 
 download_zoning:
