@@ -46,7 +46,6 @@ def from_csv():
         except Exception:
             traceback.print_exc()
             print 'Could not save row: ' + str(row)
-            raise
 
 
 def load():
